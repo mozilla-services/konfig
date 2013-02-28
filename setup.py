@@ -19,6 +19,9 @@ setup(name='konfig',
       author="Tarek Ziade",
       author_email="tarek@mozilla.com",
       include_package_data=True,
+      install_requires = [
+        'configparser==3.3.0r2',
+      ],
       zip_safe=False,
       classifiers=classifiers,
       )

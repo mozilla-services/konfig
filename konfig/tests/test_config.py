@@ -26,7 +26,7 @@ lines = 1
         3
 
 env = some ${__STUFF__}
-location = %%(here)s
+location = ${HERE}
 
 [two]
 a = b
@@ -39,7 +39,7 @@ two = "a"
 
 [three]
 more = stuff
-location = %(here)s
+location = ${HERE}
 """
 
 _FILE_THREE = """\
@@ -122,7 +122,7 @@ class ConfigTestCase(unittest.TestCase):
         self.assertEquals(map['foo'], 'bar')
 
         del os.environ['__STUFF__']
-        self.assertRaises(EnvironmentNotFoundError, config.get, 'one', 'env')
+        self.assertEquals(config.get('one', 'env'), 'some stuff')
 
         # extends
         self.assertEquals(config.get('three', 'more'), 'stuff')
@@ -140,7 +140,7 @@ class ConfigTestCase(unittest.TestCase):
                                  "four": 4})
         new_settings = settings.copy()
         self.assertEqual(settings, new_settings)
-        self.failUnless(isinstance(new_settings, SettingsDict))
+        self.assertTrue(isinstance(new_settings, SettingsDict))
 
     def test_settings_dict_getsection(self):
         settings = SettingsDict({"a.one": 1,
@@ -169,7 +169,7 @@ class ConfigTestCase(unittest.TestCase):
     def test_location_interpolation(self):
         config = Config(self.file_one)
         # file_one is a StringIO, so it has no location.
-        self.assertEquals(config.get('one', 'location'), '%(here)s')
+        self.assertEquals(config.get('one', 'location'), '${HERE}')
         # file_two is a real file, so it has a location.
         file_two_loc = os.path.dirname(self.file_two)
         self.assertEquals(config.get('three', 'location'), file_two_loc)

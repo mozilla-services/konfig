@@ -2,7 +2,8 @@
 Konfig
 ======
 
-Yet another configuration object. Compatible with ConfigParser.
+Yet another configuration object. Compatible with the updated `configparser
+<https://pypi.python.org/pypi/configparser>`_.
 
 
 Usage
@@ -14,7 +15,8 @@ Usage
    >>> c = Config('myconfig.ini')
 
 
-Then read ConfigParser's documentation for the APIs.
+Then read `configparser's documentation
+<http://docs.python.org/3/library/configparser.html>`_ for the APIs.
 
 
 Syntax Definition
