@@ -134,38 +134,34 @@ class ConfigTestCase(unittest.TestCase):
         self.assertRaises(IOError, Config, self.file_three)
 
     def test_settings_dict_copy(self):
-        settings = SettingsDict({
-          "a.one": 1,
-          "a.two": 2,
-          "b.three": 3,
-          "four": 4,
-        })
+        settings = SettingsDict({"a.one": 1,
+                                 "a.two": 2,
+                                 "b.three": 3,
+                                 "four": 4})
         new_settings = settings.copy()
         self.assertEqual(settings, new_settings)
         self.failUnless(isinstance(new_settings, SettingsDict))
 
     def test_settings_dict_getsection(self):
-        settings = SettingsDict({
-          "a.one": 1,
-          "a.two": 2,
-          "b.three": 3,
-          "four": 4,
-        })
+        settings = SettingsDict({"a.one": 1,
+                                 "a.two": 2,
+                                 "b.three": 3,
+                                 "four": 4})
+
         self.assertEquals(settings.getsection("a"), {"one": 1, "two": 2})
         self.assertEquals(settings.getsection("b"), {"three": 3})
         self.assertEquals(settings.getsection("c"), {})
         self.assertEquals(settings.getsection(""), {"four": 4})
 
     def test_settings_dict_setdefaults(self):
-        settings = SettingsDict({
-          "a.one": 1,
-          "a.two": 2,
-          "b.three": 3,
-          "four": 4,
-        })
+        settings = SettingsDict({"a.one": 1,
+                                 "a.two": 2,
+                                 "b.three": 3,
+                                 "four": 4})
+
         settings.setdefaults({"a.two": "TWO", "a.five": 5, "new": "key"})
         self.assertEquals(settings.getsection("a"),
-                         {"one": 1, "two": 2, "five": 5})
+                          {"one": 1, "two": 2, "five": 5})
         self.assertEquals(settings.getsection("b"), {"three": 3})
         self.assertEquals(settings.getsection("c"), {})
         self.assertEquals(settings.getsection(""), {"four": 4, "new": "key"})
