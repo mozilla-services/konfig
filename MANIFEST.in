@@ -1,2 +1,3 @@
 include README.rst
 include Makefile
+include CONTRIBUTORS.rst
