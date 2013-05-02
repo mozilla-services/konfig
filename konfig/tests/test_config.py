@@ -10,7 +10,7 @@ import tempfile
 import os
 from StringIO import StringIO
 
-from konfig import Config, SettingsDict, EnvironmentNotFoundError
+from konfig import Config, SettingsDict
 
 
 _FILE_ONE = """\

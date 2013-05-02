@@ -21,25 +21,26 @@ class EnvironmentNotFoundError(Exception):
 
 class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
     def __init__(self):
-        self.environment = {k: v.replace('$', '$$')
-                               for k, v in os.environ.iteritems()}
+        items = os.environ.iteritems()
+        self.environment = {k: v.replace('$', '$$') for k, v in items}
+        self.klass = super(ExtendedEnvironmentInterpolation, self)
 
     def before_get(self, parser, section, option, value, defaults):
-        klass = super(ExtendedEnvironmentInterpolation, self)
         defaults = self.environment
         defaults['HERE'] = '$${HERE}'
         if parser.filename:
             defaults['HERE'] = os.path.dirname(parser.filename)
 
-        result = klass.before_get(parser, section, option, value, defaults)
+        result = self.klass.before_get(parser, section, option, value,
+                                       defaults)
         if '\n' in result:
             return [line for line in [self._unserialize(line)
-                                    for line in result.split('\n')]
+                                      for line in result.split('\n')]
                     if line != '']
         return self._unserialize(result)
 
     def before_set(self, parser, section, option, value):
-        result = klass.before_set(parser, section, option, value)
+        result = self.klass.before_set(parser, section, option, value)
         return self._serialize(result)
 
     def _serialize(self, value):
