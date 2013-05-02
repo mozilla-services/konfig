@@ -11,7 +11,7 @@ classifiers = ["Programming Language :: Python", mplv2,
 
 
 setup(name='konfig',
-      version='0.3',
+      version='0.4',
       url='https://github.com/tarekziade/konfig',
       packages=find_packages(),
       long_description=README,
