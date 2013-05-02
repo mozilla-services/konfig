@@ -97,10 +97,14 @@ class Config(ConfigParser):
         defaults = self.defaults()
 
         if 'extends' in defaults:
+            interpolate = self._interpolation.before_get
             extends = defaults['extends']
+
             if not isinstance(extends, list):
                 extends = [extends]
+
             for file_ in extends:
+                file_ = interpolate(self, 'defaults', 'extends', file_, {})
                 self._extend(file_)
 
     def get_map(self, section=None):

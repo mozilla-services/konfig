@@ -15,7 +15,7 @@ from konfig import Config, SettingsDict, EnvironmentNotFoundError
 
 _FILE_ONE = """\
 [DEFAULT]
-extends = %s
+extends = ${TEMPFILE}
 
 [one]
 foo = bar
@@ -89,7 +89,8 @@ class ConfigTestCase(unittest.TestCase):
         f = os.fdopen(fp, 'w')
         f.write(_FILE_TWO)
         f.close()
-        self.file_one = StringIO(_FILE_ONE % filename)
+        os.environ['TEMPFILE'] = filename
+        self.file_one = StringIO(_FILE_ONE)
         self.file_two = filename
         self.file_three = StringIO(_FILE_THREE)
 
