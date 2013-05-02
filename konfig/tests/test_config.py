@@ -35,6 +35,7 @@ a = b
 _FILE_TWO = """\
 [one]
 foo = baz
+bee = 1
 two = "a"
 
 [three]

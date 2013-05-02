@@ -31,6 +31,9 @@ class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
         if parser.filename:
             defaults['HERE'] = os.path.dirname(parser.filename)
 
+        if defaults['HERE'] == '':
+            defaults['HERE'] = os.curdir
+
         result = self.klass.before_get(parser, section, option, value,
                                        defaults)
         if '\n' in result:
@@ -131,11 +134,14 @@ class Config(ConfigParser):
         parser.optionxform = lambda option: option
         parser.filename = filename
         parser.read([filename])
+        serialize = self._interpolation._serialize
+
         for section in parser:
             if section in self:
                 for option in parser[section]:
                     if option not in self[section]:
-                        self[section][option] = parser[section][option]
+                        value = parser[section][option]
+                        self[section][option] = serialize(value)
             else:
                 self[section] = parser[section]
 
