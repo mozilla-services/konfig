@@ -93,39 +93,44 @@ merged to the current file by adding new sections and values.
 If the file pointed in "extends" contains section/variable names that already
 exist in the original file, they will not override existing ones.
 
-file_one.ini:
+Here's an example: you have a public config file and want to keep some database
+passwords private. You can have those password in a separate file.
+
+public.ini:
 
 .. code-block:: ini
 
-  [section1]
-  name2 = "other value"
+  [database]
+  user = tarek
+  password = PUBLIC
 
   [section2]
   foo = baz
   bas = bar
 
 
-file_two.ini:
+And then in private.ini:
 
 .. code-block:: ini
 
   [DEFAULT]
-  extends = file_one.ini
+  extends = public.ini
 
-  [section2]
-  foo = bar
+  [database]
+  password = secret
 
-
-Result:
+Now if you use *private.ini* you will get:
 
 .. code-block:: ini
 
-  [section1]
-  name2 = "other value"
+  [database]
+  user = tarek
+  password = secret
 
   [section2]
-  foo = bar
+  foo = baz
   bas = bar
+
 
 
 To point several files, the multi-line notation can be used:
@@ -133,8 +138,8 @@ To point several files, the multi-line notation can be used:
 .. code-block:: ini
 
   [DEFAULT]
-  extends = file_one.ini
-            file_two.ini
+  extends = public1.ini
+            public2.ini
 
 
 When several files are provided, they are processed sequentially. So if the
@@ -148,7 +153,7 @@ Override mode
 If you want to extend a file and have existing values overridden,
 you can use "overrides" instead of "extends".
 
-Here's an example.  file_one.ini:
+Here's an example.  file2.ini:
 
 .. code-block:: ini
 
@@ -160,18 +165,18 @@ Here's an example.  file_one.ini:
   bas = bar
 
 
-file_two.ini:
+file1.ini:
 
 .. code-block:: ini
 
   [DEFAULT]
-  overrides = file_one.ini
+  overrides = file2.ini
 
   [section2]
   foo = bar
 
 
-Result:
+Result if you use *file1.ini*:
 
 .. code-block:: ini
 
