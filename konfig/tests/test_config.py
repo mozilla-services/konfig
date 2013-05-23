@@ -82,6 +82,15 @@ thing = ok
 """
 
 
+_FILE_OVERRIDE = """\
+[DEFAULT]
+overrides = ${TEMPFILE}
+
+[one]
+foo = bar
+"""
+
+
 class ConfigTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -94,6 +103,7 @@ class ConfigTestCase(unittest.TestCase):
         self.file_one = StringIO(_FILE_ONE)
         self.file_two = filename
         self.file_three = StringIO(_FILE_THREE)
+        self.file_override = StringIO(_FILE_OVERRIDE)
 
         fp, filename = tempfile.mkstemp()
         f = os.fdopen(fp, 'w')
@@ -175,3 +185,8 @@ class ConfigTestCase(unittest.TestCase):
         # file_two is a real file, so it has a location.
         file_two_loc = os.path.dirname(self.file_two)
         self.assertEquals(config.get('three', 'location'), file_two_loc)
+
+    def test_override_mode(self):
+        config = Config(self.file_override)
+        self.assertEquals(config.get('one', 'foo'), 'baz')
+        self.assertEquals(config.get('three', 'more'), 'stuff')

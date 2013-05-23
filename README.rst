@@ -142,3 +142,45 @@ first one has a value that is also present in the second, the second one will
 be ignored. This means that the configuration goes from the most specialized to
 the most common.
 
+Override mode
+=============
+
+If you want to extend a file and have existing values overridden,
+you can use "overrides" instead of "extends".
+
+Here's an example.  file_one.ini:
+
+.. code-block:: ini
+
+  [section1]
+  name2 = "other value"
+
+  [section2]
+  foo = baz
+  bas = bar
+
+
+file_two.ini:
+
+.. code-block:: ini
+
+  [DEFAULT]
+  overrides = file_one.ini
+
+  [section2]
+  foo = bar
+
+
+Result:
+
+.. code-block:: ini
+
+  [section1]
+  name2 = "other value"
+
+  [section2]
+  foo = baz
+  bas = bar
+
+In *section2*, notice that *foo* is now *baz*.
+

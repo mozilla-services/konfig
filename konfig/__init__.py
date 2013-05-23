@@ -97,16 +97,24 @@ class Config(ConfigParser):
         # let's expand it now if needed
         defaults = self.defaults()
 
-        if 'extends' in defaults:
+        def _list(name):
+            if name not in defaults:
+                return []
+            value = defaults[name]
+            if not isinstance(value, list):
+                value = [value]
+            return value
+
+        if 'extends' in defaults or 'overrides' in defaults:
             interpolate = self._interpolation.before_get
-            extends = defaults['extends']
 
-            if not isinstance(extends, list):
-                extends = [extends]
-
-            for file_ in extends:
+            for file_ in _list('extends'):
                 file_ = interpolate(self, 'defaults', 'extends', file_, {})
                 self._extend(file_)
+
+            for file_ in _list('overrides'):
+                file_ = interpolate(self, 'defaults', 'overrides', file_, {})
+                self._extend(file_, override=True)
 
     def get_map(self, section=None):
         """returns a dict representing the config set"""
@@ -126,7 +134,7 @@ class Config(ConfigParser):
             value = [value]
         return value
 
-    def _extend(self, filename):
+    def _extend(self, filename, override=False):
         """Expand the config with another file."""
         if not os.path.isfile(filename):
             raise IOError('No such file: %s' % filename)
@@ -139,7 +147,7 @@ class Config(ConfigParser):
         for section in parser:
             if section in self:
                 for option in parser[section]:
-                    if option not in self[section]:
+                    if option not in self[section] or override:
                         value = parser[section][option]
                         self[section][option] = serialize(value)
             else:
