@@ -164,7 +164,10 @@ class Config(ConfigParser):
         """Returns a list that can be passed to argparse or optparse.
 
         Each section/option is turned into "--section-option value"
+
         If the value is a boolean, the value will be omited.
+        If the value is a sequence, it will be converted to a comma
+        separated list
 
         Options:
 
