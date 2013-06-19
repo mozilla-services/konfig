@@ -185,7 +185,6 @@ class Config(ConfigParser):
             key = key.replace('_', '-')
             return '--' + key
 
-
         for key, value in self.get_map().items():
             if _omit(key):
                 continue
