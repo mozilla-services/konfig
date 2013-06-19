@@ -40,7 +40,7 @@ with **parser.parse_args()** - or complete it with sys.argv or whatever.
     >>> config = Config('myconfig.ini')
     >>> args_from_config = config.scan_args(parser)
 
-    >>> parser.parse_args(args_from_config + whatever)
+    >>> parser.parse_args(args=sys.argv[1:]+args_from_config)
 
 
 Syntax Definition
