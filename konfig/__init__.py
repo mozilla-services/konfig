@@ -159,7 +159,23 @@ class Config(ConfigParser):
             'comment_prefixes': ('#',),
         }
 
-    def as_args(self, strip_prefixes=None, omit_sections=None):
+    def as_args(self, strip_prefixes=None, omit_sections=None,
+                omit_options=None):
+        """Returns a list that can be passed to argparse or optparse.
+
+        Each section/option is turned into "--section-option value"
+        If the value is a boolean, the value will be omited.
+
+        Options:
+
+        * strip_prefixes: a list of section names that will be stripped
+          so the argument coverted as --option instead of --section-option
+
+        * omit_sections: a list of section to ignore
+
+        * omit_options: a list of options to ignore. Each option
+          is provided as a 2-tuple (section, option)
+        """
         args = []
 
         prefixes = ['DEFAULT']
@@ -169,7 +185,13 @@ class Config(ConfigParser):
         if omit_sections is None:
             omit_sections = []
 
+        omit_options = ['%s.%s' % (sec, option)
+                        for sec, option in omit_options]
+
         def _omit(key):
+            if key in omit_options:
+                return True
+
             for sec in omit_sections:
                 if key.startswith('%s.' % sec):
                     return True

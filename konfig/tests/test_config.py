@@ -97,6 +97,7 @@ zmq_endpoint = http://ok
 
 [other]
 stuff = 10
+thing = bleh
 
 [bleh]
 mew = 10
@@ -206,7 +207,8 @@ class ConfigTestCase(unittest.TestCase):
     def test_as_args(self):
         config = Config(self.file_args)
         args = config.as_args(strip_prefixes=['circus'],
-                              omit_sections=['bleh'])
+                              omit_sections=['bleh'],
+                              omit_options=[('other', 'thing')])
 
         wanted = ['--other-stuff', '10', '--httpd',
                   '--zmq-endpoint', 'http://ok']
