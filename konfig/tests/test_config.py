@@ -4,7 +4,7 @@
 # file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 # ***** END LICENSE BLOCK *****
-
+import argparse
 import unittest
 import tempfile
 import os
@@ -101,6 +101,12 @@ thing = bleh
 
 [bleh]
 mew = 10
+
+[mi]
+log_level = DEBUG
+log_output = stdout
+daemon = True
+pidfile = pid
 """
 
 
@@ -207,9 +213,27 @@ class ConfigTestCase(unittest.TestCase):
     def test_as_args(self):
         config = Config(self.file_args)
         args = config.as_args(strip_prefixes=['circus'],
-                              omit_sections=['bleh'],
+                              omit_sections=['bleh', 'mi'],
                               omit_options=[('other', 'thing')])
 
         wanted = ['--other-stuff', '10', '--httpd',
                   '--zmq-endpoint', 'http://ok']
+        wanted.sort()
+        args.sort()
+        self.assertEqual(args, wanted)
+
+        # it also works with an argparse parser
+        parser = argparse.ArgumentParser(description='Run some watchers.')
+        parser.add_argument('config', help='configuration file', nargs='?')
+
+        parser.add_argument('--log-level', dest='loglevel')
+        parser.add_argument('--log-output', dest='logoutput')
+        parser.add_argument('--daemon', dest='daemonize', action='store_true')
+        parser.add_argument('--pidfile', dest='pidfile')
+
+        args = config.scan_args(parser, strip_prefixes=['mi'])
+        wanted = ['--log-level', u'DEBUG', '--log-output', u'stdout',
+                  '--daemon', '--pidfile', u'pid']
+        args.sort()
+        wanted.sort()
         self.assertEqual(args, wanted)

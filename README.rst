@@ -18,11 +18,29 @@ Usage
 Then read `configparser's documentation
 <http://docs.python.org/3/library/configparser.html>`_ for the APIs.
 
-Konfig as some extra APIs like **as_args**, which will return
-the config file as argparse comptabile arguments::
+Konfig as some extra APIs like **as_args()**, which will return
+the config file as argparse compatible arguments::
 
     >>> c.as_args()
     ['--other-stuff', '10', '--httpd', '--statsd-endpoint', 'http://ok']
+
+
+For automatic filtering, you can also pass an argparse parser object
+to **scan_args()**. I will iterate over the arguments you've defined in the
+parser and look for them in the config file, then return a list of args
+like **as_args()**. You can then use this list directly
+with **parser.parse_args()** - or complete it with sys.argv or whatever.
+
+    >>> import argparse
+    >>> parser = argparse.ArgumentParser()
+    >>> parser.add_argument('--log-level', dest='loglevel')
+    >>> parser.add_argument('--log-output', dest='logoutput')
+    >>> parser.add_argument('--daemon', dest='daemonize', action='store_true')
+
+    >>> config = Config('myconfig.ini')
+    >>> args_from_config = config.scan_args(parser)
+
+    >>> parser.parse_args(args_from_config + whatever)
 
 
 Syntax Definition

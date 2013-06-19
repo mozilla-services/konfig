@@ -159,6 +159,53 @@ class Config(ConfigParser):
             'comment_prefixes': ('#',),
         }
 
+    def scan_args(self, parser, strip_prefixes=None):
+        args = []
+
+        # for each option in the parser we look for it in the config
+        prefixes = ['DEFAULT']
+        if strip_prefixes is not None:
+            prefixes.extend(strip_prefixes)
+
+        # building the list we have
+        scanned = {}
+        for key, value in self.get_map().items():
+            # type conversion
+            if isinstance(value, (list, tuple)):
+                value = ','.join([str(v) for v in value])
+
+            scanned[self._convert_key(key, prefixes)] = value
+
+        # now trying to see if we have matches
+        args = []
+
+        for action in parser._actions:
+            option = action.option_strings
+            if '--help' in option or option == []:
+                continue
+
+            option = option[0]
+            if option in scanned:
+                args.append(option)
+                value = scanned[option]
+                if not isinstance(value, bool):
+                    args.append(value)
+
+        return args
+
+    def _convert_key(self, key, prefixes=None):
+        if prefixes is None:
+            prefixes = []
+
+        for prefix in prefixes:
+            if key.startswith('%s.' % prefix):
+                key = key[len('%s.' % prefix):]
+                break
+
+        key = key.replace('.', '-')
+        key = key.replace('_', '-')
+        return '--' + key
+
     def as_args(self, strip_prefixes=None, omit_sections=None,
                 omit_options=None):
         """Returns a list that can be passed to argparse or optparse.
@@ -200,21 +247,11 @@ class Config(ConfigParser):
                     return True
             return False
 
-        def _convert_key(key):
-            for prefix in prefixes:
-                if key.startswith('%s.' % prefix):
-                    key = key[len('%s.' % prefix):]
-                    break
-
-            key = key.replace('.', '-')
-            key = key.replace('_', '-')
-            return '--' + key
-
         for key, value in self.get_map().items():
             if _omit(key):
                 continue
 
-            args.append(_convert_key(key))
+            args.append(self._convert_key(key, prefixes))
 
             # type conversion
             if isinstance(value, bool):
