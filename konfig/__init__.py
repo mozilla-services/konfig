@@ -184,12 +184,12 @@ class Config(ConfigParser):
             if '--help' in option or option == []:
                 continue
 
-            option = option[0]
+            option = option[-1]
             if option in scanned:
                 args.append(option)
                 value = scanned[option]
                 if not isinstance(value, bool):
-                    args.append(value)
+                    args.append(str(value))
 
         return args
 
@@ -234,6 +234,9 @@ class Config(ConfigParser):
 
         if omit_sections is None:
             omit_sections = []
+
+        if omit_options is None:
+            omit_options = []
 
         omit_options = ['%s.%s' % (sec, option)
                         for sec, option in omit_options]

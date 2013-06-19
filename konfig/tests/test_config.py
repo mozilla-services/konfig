@@ -222,11 +222,19 @@ class ConfigTestCase(unittest.TestCase):
         args.sort()
         self.assertEqual(args, wanted)
 
+        args = config.as_args(omit_sections=['bleh', 'mi'])
+        wanted = ['--circus-zmq-endpoint', 'http://ok', '--other-thing',
+                  'bleh', '--other-stuff', '10', '--circus-httpd']
+        wanted.sort()
+        args.sort()
+        self.assertEqual(args, wanted)
+
+
         # it also works with an argparse parser
         parser = argparse.ArgumentParser(description='Run some watchers.')
         parser.add_argument('config', help='configuration file', nargs='?')
 
-        parser.add_argument('--log-level', dest='loglevel')
+        parser.add_argument('-L', '--log-level', dest='loglevel')
         parser.add_argument('--log-output', dest='logoutput')
         parser.add_argument('--daemon', dest='daemonize', action='store_true')
         parser.add_argument('--pidfile', dest='pidfile')
