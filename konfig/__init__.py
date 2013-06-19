@@ -159,6 +159,49 @@ class Config(ConfigParser):
             'comment_prefixes': ('#',),
         }
 
+    def as_args(self, strip_prefixes=None, omit_sections=None):
+        args = []
+
+        prefixes = ['DEFAULT']
+        if strip_prefixes is not None:
+            prefixes.extend(strip_prefixes)
+
+        if omit_sections is None:
+            omit_sections = []
+
+        def _omit(key):
+            for sec in omit_sections:
+                if key.startswith('%s.' % sec):
+                    return True
+            return False
+
+        def _convert_key(key):
+            for prefix in prefixes:
+                if key.startswith('%s.' % prefix):
+                    key = key[len('%s.' % prefix):]
+                    break
+
+            key = key.replace('.', '-')
+            key = key.replace('_', '-')
+            return '--' + key
+
+
+        for key, value in self.get_map().items():
+            if _omit(key):
+                continue
+
+            args.append(_convert_key(key))
+
+            # type conversion
+            if isinstance(value, bool):
+                continue
+            elif isinstance(value, (list, tuple)):
+                value = ','.join([str(v) for v in value])
+
+            args.append(str(value))
+
+        return args
+
 
 class SettingsDict(dict):
     """A dict subclass with some extra helpers for dealing with app settings.

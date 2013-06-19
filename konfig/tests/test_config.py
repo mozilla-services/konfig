@@ -90,6 +90,18 @@ overrides = ${TEMPFILE}
 foo = bar
 """
 
+_FILE_ARGS = """\
+[circus]
+httpd = True
+zmq_endpoint = http://ok
+
+[other]
+stuff = 10
+
+[bleh]
+mew = 10
+"""
+
 
 class ConfigTestCase(unittest.TestCase):
 
@@ -104,7 +116,7 @@ class ConfigTestCase(unittest.TestCase):
         self.file_two = filename
         self.file_three = StringIO(_FILE_THREE)
         self.file_override = StringIO(_FILE_OVERRIDE)
-
+        self.file_args = StringIO(_FILE_ARGS)
         fp, filename = tempfile.mkstemp()
         f = os.fdopen(fp, 'w')
         f.write(_FILE_FOUR)
@@ -190,3 +202,12 @@ class ConfigTestCase(unittest.TestCase):
         config = Config(self.file_override)
         self.assertEquals(config.get('one', 'foo'), 'baz')
         self.assertEquals(config.get('three', 'more'), 'stuff')
+
+    def test_as_args(self):
+        config = Config(self.file_args)
+        args = config.as_args(strip_prefixes=['circus'],
+                              omit_sections=['bleh'])
+
+        wanted = ['--other-stuff', '10', '--httpd',
+                  '--zmq-endpoint', 'http://ok']
+        self.assertEqual(args, wanted)
