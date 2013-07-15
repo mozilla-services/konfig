@@ -12,7 +12,7 @@ classifiers = ["Programming Language :: Python", mplv2,
 
 setup(name='konfig',
       version='0.6',
-      url='https://github.com/tarekziade/konfig',
+      url='https://github.com/mozilla-services/konfig',
       packages=find_packages(),
       long_description=README,
       description=("Yet Another Config Parser."),
