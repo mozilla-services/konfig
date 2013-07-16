@@ -22,7 +22,7 @@ class EnvironmentNotFoundError(Exception):
 class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
     def __init__(self):
         items = os.environ.iteritems()
-        self.environment = {k: v.replace('$', '$$') for k, v in items}
+        self.environment = dict([(k, v.replace('$', '$$')) for k, v in items])
         self.klass = super(ExtendedEnvironmentInterpolation, self)
 
     def before_get(self, parser, section, option, value, defaults):
