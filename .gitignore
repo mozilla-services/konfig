@@ -1,0 +1,7 @@
+*.pyc
+*.pyo
+.tox
+bin/
+include/
+lib/
+man/

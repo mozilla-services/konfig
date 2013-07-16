@@ -19,3 +19,9 @@ bin/nosetests: bin/python
 
 bin/coverage: bin/python
 	bin/pip install coverage
+
+bin/tox: bin/python
+	bin/pip install tox
+
+tox: bin/tox
+	bin/tox
