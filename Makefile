@@ -8,8 +8,8 @@ build:
 	virtualenv $(VTENV_OPTS) .
 	bin/python setup.py develop
 
-test:	bin/nosetests
-	bin/nosetests -x konfig
+test:	bin/tox
+	bin/tox
 
 coverage: bin/coverage
 	bin/nosetests --with-coverage --cover-html --cover-html-dir=html --cover-package=konfig
@@ -22,6 +22,3 @@ bin/coverage: bin/python
 
 bin/tox: bin/python
 	bin/pip install tox
-
-tox: bin/tox
-	bin/tox
