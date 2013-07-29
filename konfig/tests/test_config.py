@@ -107,6 +107,9 @@ log_level = DEBUG
 log_output = stdout
 daemon = True
 pidfile = pid
+multi = one
+        two
+        three
 """
 
 
@@ -238,10 +241,14 @@ class ConfigTestCase(unittest.TestCase):
         parser.add_argument('--log-output', dest='logoutput')
         parser.add_argument('--daemon', dest='daemonize', action='store_true')
         parser.add_argument('--pidfile', dest='pidfile')
+        parser.add_argument('--multi', action='append')
 
         args = config.scan_args(parser, strip_prefixes=['mi'])
-        wanted = ['--log-level', u'DEBUG', '--log-output', u'stdout',
-                  '--daemon', '--pidfile', u'pid']
         args.sort()
+
+        wanted = ['--log-level', u'DEBUG', '--log-output', u'stdout',
+                  '--daemon', '--pidfile', u'pid', '--multi',
+                  'one', '--multi', 'two', '--multi', 'three']
         wanted.sort()
-        self.assertEqual(args, wanted)
+
+        self.assertEqual(wanted, args)

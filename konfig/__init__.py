@@ -172,7 +172,7 @@ class Config(ConfigParser):
         for key, value in self.get_map().items():
             # type conversion
             if isinstance(value, (list, tuple)):
-                value = ','.join([str(v) for v in value])
+                value = [str(v) for v in value]
 
             scanned[self._convert_key(key, prefixes)] = value
 
@@ -186,10 +186,15 @@ class Config(ConfigParser):
 
             option = option[-1]
             if option in scanned:
-                args.append(option)
                 value = scanned[option]
-                if not isinstance(value, bool):
-                    args.append(str(value))
+                if not isinstance(value, list):
+                    value = [value]
+
+                for v in value:
+                    # regular option
+                    args.append(option)
+                    if not isinstance(v, bool):
+                        args.append(str(v))
 
         return args
 
