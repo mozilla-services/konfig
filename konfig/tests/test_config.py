@@ -97,8 +97,13 @@ httpd = True
 zmq_endpoint = http://ok
 
 [other]
-stuff = 10
+stuff = 10.3
 thing = bleh
+
+[floats]
+stuff = 10.3
+float = 9.
+again = .3
 
 [bleh]
 mew = 10
@@ -215,21 +220,27 @@ class ConfigTestCase(unittest.TestCase):
         self.assertEquals(config.get('one', 'foo'), 'baz')
         self.assertEquals(config.get('three', 'more'), 'stuff')
 
+    def test_convert_float(self):
+        config = Config(self.file_args)
+        self.assertEqual(config['floats']['stuff'], 10.3)
+        self.assertEqual(config['floats']['float'], 9.0)
+        self.assertEqual(config['floats']['again'], .3)
+
     def test_as_args(self):
         config = Config(self.file_args)
         args = config.as_args(strip_prefixes=['circus'],
-                              omit_sections=['bleh', 'mi'],
+                              omit_sections=['bleh', 'mi', 'floats'],
                               omit_options=[('other', 'thing')])
 
-        wanted = ['--other-stuff', '10', '--httpd',
+        wanted = ['--other-stuff', '10.3', '--httpd',
                   '--zmq-endpoint', 'http://ok']
         wanted.sort()
         args.sort()
         self.assertEqual(args, wanted)
 
-        args = config.as_args(omit_sections=['bleh', 'mi'])
+        args = config.as_args(omit_sections=['bleh', 'mi', 'floats'])
         wanted = ['--circus-zmq-endpoint', 'http://ok', '--other-thing',
-                  'bleh', '--other-stuff', '10', '--circus-httpd']
+                  'bleh', '--other-stuff', '10.3', '--circus-httpd']
         wanted.sort()
         args.sort()
         self.assertEqual(args, wanted)

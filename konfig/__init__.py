@@ -12,6 +12,7 @@ from configparser import ConfigParser, ExtendedInterpolation
 
 
 _IS_NUMBER = re.compile('^-?[0-9]+$')
+_IS_FLOAT = re.compile('^-?[0-9]+\.[0-9]?$|^\.[0-9]+$')
 
 
 class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
@@ -60,6 +61,8 @@ class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
         value = value.strip()
         if _IS_NUMBER.match(value):
             return int(value)
+        elif _IS_FLOAT.match(value):
+            return float(value)
         elif value.startswith('"') and value.endswith('"'):
             return value[1:-1]
         elif value.lower() in ('true', 'false'):
