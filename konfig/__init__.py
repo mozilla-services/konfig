@@ -11,8 +11,7 @@ import os
 from configparser import ConfigParser, ExtendedInterpolation
 
 
-_IS_NUMBER = re.compile('^-?[0-9].*')
-_IS_ENV_VAR = re.compile('\$\{(\w.*)?\}')
+_IS_NUMBER = re.compile('^-?[0-9]+$')
 
 
 class EnvironmentNotFoundError(Exception):
@@ -64,10 +63,7 @@ class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
 
         value = value.strip()
         if _IS_NUMBER.match(value):
-            try:
-                return int(value)
-            except ValueError:
-                pass
+            return int(value)
         elif value.startswith('"') and value.endswith('"'):
             return value[1:-1]
         elif value.lower() in ('true', 'false'):
