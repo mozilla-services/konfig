@@ -12,7 +12,7 @@ from configparser import ConfigParser, ExtendedInterpolation
 
 
 _IS_NUMBER = re.compile('^-?[0-9]+$')
-_IS_FLOAT = re.compile('^-?[0-9]+\.[0-9]?$|^\.[0-9]+$')
+_IS_FLOAT = re.compile('^-?[0-9]+\.[0-9]*$|^-?\.[0-9]+$')
 
 
 class ExtendedEnvironmentInterpolation(ExtendedInterpolation):

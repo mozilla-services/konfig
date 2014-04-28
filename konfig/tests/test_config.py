@@ -104,6 +104,8 @@ thing = bleh
 stuff = 10.3
 float = 9.
 again = .3
+digits = 10.34
+digits2 = .34
 
 [bleh]
 mew = 10
@@ -225,6 +227,8 @@ class ConfigTestCase(unittest.TestCase):
         self.assertEqual(config['floats']['stuff'], 10.3)
         self.assertEqual(config['floats']['float'], 9.0)
         self.assertEqual(config['floats']['again'], .3)
+        self.assertEqual(config['floats']['digits'], 10.34)
+        self.assertEqual(config['floats']['digits2'], .34)
 
     def test_as_args(self):
         config = Config(self.file_args)
