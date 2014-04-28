@@ -14,10 +14,6 @@ from configparser import ConfigParser, ExtendedInterpolation
 _IS_NUMBER = re.compile('^-?[0-9]+$')
 
 
-class EnvironmentNotFoundError(Exception):
-    pass
-
-
 class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
     def __init__(self):
         items = os.environ.iteritems()
