@@ -20,6 +20,7 @@ extends = ${TEMPFILE}
 [one]
 foo = bar
 num = -12
+not_a_num = 12abc
 st = "o=k"
 lines = 1
         two
@@ -144,6 +145,7 @@ class ConfigTestCase(unittest.TestCase):
         # values conversion
         self.assertEquals(config.get('one', 'foo'), 'bar')
         self.assertEquals(config.get('one', 'num'), -12)
+        self.assertEquals(config.get('one', 'not_a_num'), "12abc")
         self.assertEquals(config.get('one', 'st'), 'o=k')
         self.assertEquals(config.get('one', 'lines'), [1, 'two', 3])
         self.assertEquals(config.get('one', 'env'), 'some stuff')
