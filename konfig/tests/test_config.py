@@ -1,3 +1,4 @@
+# coding: utf8
 # ***** BEGIN LICENSE BLOCK *****
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -268,3 +269,8 @@ class ConfigTestCase(unittest.TestCase):
         wanted.sort()
 
         self.assertEqual(wanted, args)
+
+    def test_utf8(self):
+        utf8 = os.path.join(os.path.dirname(__file__), 'utf8.ini')
+        config = Config(utf8)
+        self.assertEqual(config.get('ok', 'yeah'), u'é')
