@@ -29,7 +29,7 @@ Usage
 Then read `configparser's documentation
 <http://docs.python.org/3/library/configparser.html>`_ for the APIs.
 
-Konfig as some extra APIs like **as_args()**, which will return
+Konfig adds some extra APIs like **as_args()**, which will return
 the config file as argparse compatible arguments::
 
     >>> c.as_args()
