@@ -5,6 +5,17 @@ Konfig
 Yet another configuration object. Compatible with the updated `configparser
 <https://pypi.python.org/pypi/configparser>`_.
 
+|travis| |master-coverage|
+
+
+.. |master-coverage| image::
+    https://coveralls.io/repos/mozilla-services/konfig/badge.svg?branch=master
+    :alt: Coverage
+    :target: https://coveralls.io/r/mozilla-services/konfig
+
+.. |travis| image:: https://travis-ci.org/mozilla-services/konfig.svg?branch=master
+    :target: https://travis-ci.org/mozilla-services/konfig
+
 
 Usage
 =====
