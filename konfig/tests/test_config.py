@@ -8,7 +8,7 @@ import argparse
 import unittest
 import tempfile
 import os
-from StringIO import StringIO
+from six import StringIO
 
 from konfig import Config, SettingsDict
 
@@ -248,7 +248,6 @@ class ConfigTestCase(unittest.TestCase):
         wanted.sort()
         args.sort()
         self.assertEqual(args, wanted)
-
 
         # it also works with an argparse parser
         parser = argparse.ArgumentParser(description='Run some watchers.')

@@ -9,6 +9,7 @@
 import re
 import os
 from configparser import ConfigParser, ExtendedInterpolation
+from six import string_types, integer_types
 
 
 _IS_NUMBER = re.compile('^-?[0-9]+$')
@@ -17,7 +18,7 @@ _IS_FLOAT = re.compile('^-?[0-9]+\.[0-9]*$|^-?\.[0-9]+$')
 
 class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
     def __init__(self):
-        items = os.environ.iteritems()
+        items = os.environ.items()
         self.environment = dict([(k, v.replace('$', '$$')) for k, v in items])
         self.klass = super(ExtendedEnvironmentInterpolation, self)
 
@@ -45,7 +46,7 @@ class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
     def _serialize(self, value):
         if isinstance(value, bool):
             value = str(value).lower()
-        elif isinstance(value, (int, long)):
+        elif isinstance(value, integer_types):
             value = str(value)
         elif isinstance(value, (list, tuple)):
             value = '\n'.join(['    %s' % line for line in value]).strip()
@@ -54,7 +55,7 @@ class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
         return value
 
     def _unserialize(self, value):
-        if not isinstance(value, basestring):
+        if not isinstance(value, string_types):
             # already converted
             return value
 
@@ -75,7 +76,7 @@ class Config(ConfigParser):
     def __init__(self, filename):
         # let's read the file
         ConfigParser.__init__(self, **self._configparser_kwargs())
-        if isinstance(filename, basestring):
+        if isinstance(filename, string_types):
             self.filename = filename
             self.read(filename)
         else:
@@ -118,7 +119,7 @@ class Config(ConfigParser):
 
         res = {}
         for section in self:
-            for option, value in self[section].iteritems():
+            for option, value in self[section].items():
                 option = '%s.%s' % (section, option)
                 res[option] = value
         return res
@@ -289,7 +290,7 @@ class SettingsDict(dict):
         copy is also an instance of SettingsDict.
         """
         new_items = self.__class__()
-        for k, v in self.iteritems():
+        for k, v in self.items():
             new_items[k] = v
         return new_items
 
@@ -314,13 +315,13 @@ class SettingsDict(dict):
         section_items = self.__class__()
         # If the section is "" then get keys without a section.
         if not section:
-            for key, value in self.iteritems():
+            for key, value in self.items():
                 if self.separator not in key:
                     section_items[key] = value
         # Otherwise, get keys prefixed with that section name.
         else:
             prefix = section + self.separator
-            for key, value in self.iteritems():
+            for key, value in self.items():
                 if key.startswith(prefix):
                     section_items[key[len(prefix):]] = value
         return section_items
@@ -339,5 +340,5 @@ class SettingsDict(dict):
             else:
                 for k, v in arg:
                     self.setdefault(k, v)
-        for k, v in kwds.iteritems():
+        for k, v in kwds.items():
             self.setdefault(k, v)
