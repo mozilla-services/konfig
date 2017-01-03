@@ -11,7 +11,7 @@ classifiers = ["Programming Language :: Python", mplv2,
 
 
 setup(name='konfig',
-      version='1.1',
+      version='1.2',
       url='https://github.com/mozilla-services/konfig',
       packages=find_packages(),
       long_description=README,
