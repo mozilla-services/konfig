@@ -13,7 +13,7 @@ from six import string_types, integer_types
 
 
 _IS_NUMBER = re.compile('^-?[0-9]+$')
-_IS_FLOAT = re.compile('^-?[0-9]+\.[0-9]*$|^-?\.[0-9]+$')
+_IS_FLOAT = re.compile(r'^-?[0-9]+\.[0-9]*$|^-?\.[0-9]+$')
 
 
 class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
@@ -83,7 +83,7 @@ class Config(ConfigParser):
             self.filename = None
             self.read_file(filename)
 
-    def optionxform(self, option):
+    def optionxform(self, option):  # pylint: disable=E0202
         return option
 
     def _read(self, fp, filename):
@@ -127,7 +127,7 @@ class Config(ConfigParser):
     def mget(self, section, option):
         value = self.get(section, option)
         if not isinstance(value, list):
-            value = [value]
+            return [value]
         return value
 
     def _extend(self, filename, override=False):
@@ -138,6 +138,7 @@ class Config(ConfigParser):
         parser.optionxform = lambda option: option
         parser.filename = filename
         parser.read([filename])
+        # pylint: disable=E1101,W0212
         serialize = self._interpolation._serialize
 
         for section in parser:
@@ -175,7 +176,7 @@ class Config(ConfigParser):
         # now trying to see if we have matches
         args = []
 
-        for action in parser._actions:
+        for action in parser._actions:  # pylint: disable=W0212
             option = action.option_strings
             if '--help' in option or option == []:
                 continue

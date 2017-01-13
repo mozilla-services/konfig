@@ -1,24 +1,37 @@
-.PHONY: docs build test coverage build_rpm
+.PHONY: build test coverage clean
 
-ifndef VTENV_OPTS
+SYSTEMPYTHON = `which python3 python | head -n 1`
+VIRTUALENV = virtualenv --python=$(SYSTEMPYTHON)
 VTENV_OPTS = "--no-site-packages"
-endif
+ENV = ./local
+ENV_BIN = $(ENV)/bin
 
-build:	
-	virtualenv $(VTENV_OPTS) .
-	bin/python setup.py develop
+build: $(ENV_BIN)/python
+	$(ENV_BIN)/python setup.py develop
 
-test:	bin/tox
-	bin/tox
+test:	$(ENV_BIN)/tox
+	$(ENV_BIN)/tox
 
-coverage: bin/coverage
-	bin/nosetests --with-coverage --cover-html --cover-html-dir=html --cover-package=konfig
+coverage: $(ENV_BIN)/nosetests
+	$(ENV_BIN)/nosetests --with-coverage --cover-html --cover-html-dir=html --cover-package=konfig
 
-bin/nosetests: bin/python
-	bin/pip install nose
+$(ENV_BIN)/python:
+	$(VIRTUALENV) $(VTENV_OPTS) $(ENV)
 
-bin/coverage: bin/python
-	bin/pip install coverage
+$(ENV_BIN)/nosetests: $(ENV_BIN)/python
+	$(ENV_BIN)/pip install nose
 
-bin/tox: bin/python
-	bin/pip install tox
+$(ENV_BIN)/coverage: $(ENV_BIN)/python
+	$(ENV_BIN)/pip install coverage
+
+$(ENV_BIN)/tox: $(ENV_BIN)/python
+	$(ENV_BIN)/pip install tox
+
+clean:
+	rm -rf $(ENV)
+	rm -rf konfig.egg-info
+	rm -rf .tox
+	rm -rf html
+	find . -name '*.pyc' -exec rm -f {} +
+	find . -name '*.pyo' -exec rm -f {} +
+	find . -name __pycache__ -exec rm -rf {} +

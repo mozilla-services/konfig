@@ -20,7 +20,7 @@ setup(name='konfig',
       author_email="tarek@mozilla.com",
       include_package_data=True,
       install_requires = [
-        'configparser', 'argparse', 'six'
+        'configparser', 'six'
       ],
       zip_safe=False,
       classifiers=classifiers,

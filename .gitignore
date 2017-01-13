@@ -1,7 +1,8 @@
 *.pyc
 *.pyo
 .tox
-bin/
-include/
-lib/
 man/
+local/
+html/
+konfig.egg-info/
+.coverage

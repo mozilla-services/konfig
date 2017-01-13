@@ -151,26 +151,26 @@ class ConfigTestCase(unittest.TestCase):
         config = Config(self.file_one)
 
         # values conversion
-        self.assertEquals(config.get('one', 'foo'), 'bar')
-        self.assertEquals(config.get('one', 'num'), -12)
-        self.assertEquals(config.get('one', 'not_a_num'), "12abc")
-        self.assertEquals(config.get('one', 'st'), 'o=k')
-        self.assertEquals(config.get('one', 'lines'), [1, 'two', 3])
-        self.assertEquals(config.get('one', 'env'), 'some stuff')
+        self.assertMultiLineEqual(config.get('one', 'foo'), 'bar')
+        self.assertTrue(config.get('one', 'num') == -12)
+        self.assertMultiLineEqual(config.get('one', 'not_a_num'), "12abc")
+        self.assertMultiLineEqual(config.get('one', 'st'), 'o=k')
+        self.assertListEqual(config.get('one', 'lines'), [1, 'two', 3])
+        self.assertMultiLineEqual(config.get('one', 'env'), 'some stuff')
 
         # getting a map
-        map = config.get_map()
-        self.assertEquals(map['one.foo'], 'bar')
+        _map = config.get_map()
+        self.assertMultiLineEqual(_map['one.foo'], 'bar')
 
-        map = config.get_map('one')
-        self.assertEquals(map['foo'], 'bar')
+        _map = config.get_map('one')
+        self.assertMultiLineEqual(_map['foo'], 'bar')
 
         del os.environ['__STUFF__']
-        self.assertEquals(config.get('one', 'env'), 'some stuff')
+        self.assertMultiLineEqual(config.get('one', 'env'), 'some stuff')
 
         # extends
-        self.assertEquals(config.get('three', 'more'), 'stuff')
-        self.assertEquals(config.get('one', 'two'), 'a')
+        self.assertMultiLineEqual(config.get('three', 'more'), 'stuff')
+        self.assertMultiLineEqual(config.get('one', 'two'), 'a')
 
     def test_nofile(self):
         # if a user tries to use an inexistant file in extensions,
@@ -192,10 +192,10 @@ class ConfigTestCase(unittest.TestCase):
                                  "b.three": 3,
                                  "four": 4})
 
-        self.assertEquals(settings.getsection("a"), {"one": 1, "two": 2})
-        self.assertEquals(settings.getsection("b"), {"three": 3})
-        self.assertEquals(settings.getsection("c"), {})
-        self.assertEquals(settings.getsection(""), {"four": 4})
+        self.assertDictEqual(settings.getsection("a"), {"one": 1, "two": 2})
+        self.assertDictEqual(settings.getsection("b"), {"three": 3})
+        self.assertDictEqual(settings.getsection("c"), {})
+        self.assertDictEqual(settings.getsection(""), {"four": 4})
 
     def test_settings_dict_setdefaults(self):
         settings = SettingsDict({"a.one": 1,
@@ -204,24 +204,26 @@ class ConfigTestCase(unittest.TestCase):
                                  "four": 4})
 
         settings.setdefaults({"a.two": "TWO", "a.five": 5, "new": "key"})
-        self.assertEquals(settings.getsection("a"),
-                          {"one": 1, "two": 2, "five": 5})
-        self.assertEquals(settings.getsection("b"), {"three": 3})
-        self.assertEquals(settings.getsection("c"), {})
-        self.assertEquals(settings.getsection(""), {"four": 4, "new": "key"})
+        self.assertDictEqual(settings.getsection("a"),
+                             {"one": 1, "two": 2, "five": 5})
+        self.assertDictEqual(settings.getsection("b"), {"three": 3})
+        self.assertDictEqual(settings.getsection("c"), {})
+        self.assertDictEqual(
+            settings.getsection(""), {"four": 4, "new": "key"})
 
     def test_location_interpolation(self):
         config = Config(self.file_one)
         # file_one is a StringIO, so it has no location.
-        self.assertEquals(config.get('one', 'location'), '${HERE}')
+        self.assertMultiLineEqual(config.get('one', 'location'), '${HERE}')
         # file_two is a real file, so it has a location.
         file_two_loc = os.path.dirname(self.file_two)
-        self.assertEquals(config.get('three', 'location'), file_two_loc)
+        self.assertMultiLineEqual(
+            config.get('three', 'location'), file_two_loc)
 
     def test_override_mode(self):
         config = Config(self.file_override)
-        self.assertEquals(config.get('one', 'foo'), 'baz')
-        self.assertEquals(config.get('three', 'more'), 'stuff')
+        self.assertMultiLineEqual(config.get('one', 'foo'), 'baz')
+        self.assertMultiLineEqual(config.get('three', 'more'), 'stuff')
 
     def test_convert_float(self):
         config = Config(self.file_args)
