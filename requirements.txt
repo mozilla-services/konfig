@@ -1,2 +1,12 @@
+# requires
 configparser
 six
+
+# develop
+coverage
+nose
+pip
+pylint
+tox
+twine
+wheel

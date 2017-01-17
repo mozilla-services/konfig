@@ -6,6 +6,16 @@
 # ***** END LICENSE BLOCK *****
 """ Configuration file reader / writer
 """
+
+__version__      = "2.0.0rc1"
+__description__  = "Yet Another Config Parser."
+__url__          = "https://github.com/mozilla-services/konfig"
+__license__      = "MPLv2.0"
+__author__       = 'Tarek Ziade'
+__author_email__ = 'tarek@mozilla.com'
+__keywords__     = 'config konfig configparser'
+
+
 import re
 import os
 from configparser import ConfigParser, ExtendedInterpolation

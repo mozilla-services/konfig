@@ -1,37 +1,76 @@
-.PHONY: build test coverage clean
+# -*- coding: utf-8; mode: makefile-gmake -*-
+
+.DEFAULT = help
+
+# list of python packages (folders) or modules (files) of this build
+PYOBJECTS = konfig
+# folder where the python distribution takes place
+PYDIST   ?= dist
+# folder where the python intermediate build files take place
+PYBUILD  ?= build
 
 SYSTEMPYTHON = `which python3 python | head -n 1`
-VIRTUALENV = virtualenv --python=$(SYSTEMPYTHON)
-VTENV_OPTS = "--no-site-packages"
-ENV = ./local
+VIRTUALENV   = virtualenv --python=$(SYSTEMPYTHON)
+VTENV_OPTS   = "--no-site-packages"
+
+ENV     = ./local
 ENV_BIN = $(ENV)/bin
 
-build: $(ENV_BIN)/python
-	$(ENV_BIN)/python setup.py develop
 
-test:	$(ENV_BIN)/tox
+PHONY += help
+help::
+	@echo  'usage:'
+	@echo
+	@echo  '  build  - build virtualenv and install (developer mode)'
+	@echo  '  lint   - run pylint within "build" (developer mode)'
+	@echo  '  test   - run tests for all supported environments (tox)'
+	@echo  '  dist   - build packages in "$(PYDIST)/"'
+	@echo  '  pypi   - upload "$(PYDIST)/*" files to PyPi'
+	@echo  '  clean	 - remove most generated files'
+
+
+PHONY += build
+build: $(ENV)
+	$(ENV_BIN)/pip install -e .
+
+PHONY += lint
+lint: $(ENV)
+	$(ENV_BIN)/pylint $(PYOBJECTS) --rcfile pylintrc --ignore tests
+
+PHONY += test
+test:  $(ENV)
 	$(ENV_BIN)/tox
 
-coverage: $(ENV_BIN)/nosetests
-	$(ENV_BIN)/nosetests --with-coverage --cover-html --cover-html-dir=html --cover-package=konfig
-
-$(ENV_BIN)/python:
+$(ENV):
 	$(VIRTUALENV) $(VTENV_OPTS) $(ENV)
+	$(ENV_BIN)/pip install -r requirements.txt
 
-$(ENV_BIN)/nosetests: $(ENV_BIN)/python
-	$(ENV_BIN)/pip install nose
+# for distribution, use python from virtualenv
+PHONY += dist
+dist:  clean-dist $(ENV)
+	$(ENV_BIN)/python setup.py \
+		sdist -d $(PYDIST)  \
+		bdist_wheel --bdist-dir $(PYBUILD) -d $(PYDIST)
 
-$(ENV_BIN)/coverage: $(ENV_BIN)/python
-	$(ENV_BIN)/pip install coverage
+PHONY += pypi
+pypi: dist
+	$(ENV_BIN)/twine upload $(PYDIST)/*
 
-$(ENV_BIN)/tox: $(ENV_BIN)/python
-	$(ENV_BIN)/pip install tox
+PHONY += clean-dist
+clean-dist:
+	rm -rf ./$(PYBUILD) ./$(PYDIST)
 
-clean:
+
+PHONY += clean
+clean: clean-dist
 	rm -rf $(ENV)
-	rm -rf konfig.egg-info
-	rm -rf .tox
-	rm -rf html
+	rm -rf *.egg-info .coverage
+	rm -rf .eggs .tox html
+	find . -name '*~' -exec echo rm -f {} +
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name __pycache__ -exec rm -rf {} +
+
+
+# END of Makefile
+.PHONY: $(PHONY)

@@ -1,0 +1,9 @@
+2.0.0 - 2016-01-17
+==================
+
+ * Py27, Py35 compliant
+
+0.1 - 1.2
+=========
+
+  * History not yet documented / sorry

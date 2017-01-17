@@ -1,8 +1,13 @@
+*~
 *.pyc
 *.pyo
+*.egg-info
+*.swp
+build
+dist
 .tox
+.eggs
 man/
 local/
 html/
-konfig.egg-info/
 .coverage
