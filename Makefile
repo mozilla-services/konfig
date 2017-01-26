@@ -2,6 +2,8 @@
 
 .DEFAULT = help
 
+# python version to use
+PY       ?=3
 # list of python packages (folders) or modules (files) of this build
 PYOBJECTS = konfig
 # folder where the python distribution takes place
@@ -9,11 +11,11 @@ PYDIST   ?= dist
 # folder where the python intermediate build files take place
 PYBUILD  ?= build
 
-SYSTEMPYTHON = `which python3 python | head -n 1`
+SYSTEMPYTHON = `which python$(PY) python | head -n 1`
 VIRTUALENV   = virtualenv --python=$(SYSTEMPYTHON)
 VTENV_OPTS   = "--no-site-packages"
 
-ENV     = ./local
+ENV     = ./local/py$(PY)
 ENV_BIN = $(ENV)/bin
 
 
@@ -35,11 +37,20 @@ build: $(ENV)
 
 PHONY += lint
 lint: $(ENV)
-	$(ENV_BIN)/pylint $(PYOBJECTS) --rcfile pylintrc --ignore tests
+	$(ENV_BIN)/pylint $(PYOBJECTS) --rcfile pylintrc
 
 PHONY += test
 test:  $(ENV)
 	$(ENV_BIN)/tox
+
+# set breakpoint with:
+#    DEBUG()
+# e.g. to run tests in debug mode in emacs use:
+#   'M-x pdb' ... 'make debug'
+
+PHONY += debug
+debug: build
+	DEBUG=1 $(ENV_BIN)/nosetests -vx mozsvc/tests
 
 $(ENV):
 	$(VIRTUALENV) $(VTENV_OPTS) $(ENV)
