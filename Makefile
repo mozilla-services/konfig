@@ -1,6 +1,8 @@
 # -*- coding: utf-8; mode: makefile-gmake -*-
 
 .DEFAULT = help
+DEBUG ?= --pdb
+TEST ?= .
 
 # python version to use
 PY       ?=3
@@ -14,6 +16,7 @@ PYBUILD  ?= build
 SYSTEMPYTHON = `which python$(PY) python | head -n 1`
 VIRTUALENV   = virtualenv --python=$(SYSTEMPYTHON)
 VTENV_OPTS   = "--no-site-packages"
+TEST_FOLDER  = ./konfig/tests
 
 ENV     = ./local/py$(PY)
 ENV_BIN = $(ENV)/bin
@@ -23,17 +26,39 @@ PHONY += help
 help::
 	@echo  'usage:'
 	@echo
-	@echo  '  build  - build virtualenv and install (developer mode)'
-	@echo  '  lint   - run pylint within "build" (developer mode)'
-	@echo  '  test   - run tests for all supported environments (tox)'
-	@echo  '  dist   - build packages in "$(PYDIST)/"'
-	@echo  '  pypi   - upload "$(PYDIST)/*" files to PyPi'
-	@echo  '  clean	 - remove most generated files'
+	@echo  '  build     - build virtualenv ($(ENV)) and install *developer mode*'
+	@echo  '  lint      - run pylint within "build" (developer mode)'
+	@echo  '  test      - run tests for all supported environments (tox)'
+	@echo  '  debug     - run tests within a PDB debug session'
+	@echo  '  dist      - build packages in "$(PYDIST)/"'
+	@echo  '  pypi      - upload "$(PYDIST)/*" files to PyPi'
+	@echo  '  clean	    - remove most generated files'
+	@echo
+	@echo  'options:'
+	@echo
+	@echo  '  PY=3      - python version to use (default 3)'
+	@echo  '  TEST=.    - choose test from $(TEST_FOLDER) (default "." runs all)'
+	@echo  '  DEBUG=    - target "debug": do not invoke PDB on errors'
+	@echo
+	@echo  'When using target "debug", set breakpoints within py-source by adding::'
+	@echo  '    ...'
+	@echo  '    DEBUG()'
+	@echo  '    ...'
+	@echo
+	@echo  'Example; a clean and fresh build (in local/py3), run all tests (py27, py35, lint)::'
+	@echo
+	@echo  '  make clean build test'
+	@echo
+	@echo  'Example; debug "test_<name>.py" within a python2 session (in local/py2)::'
+	@echo
+	@echo  '  make PY=2 TEST=test_<name>.py debug'
+	@echo
 
 
 PHONY += build
 build: $(ENV)
-	$(ENV_BIN)/pip install -e .
+	$(ENV_BIN)/pip -v install -e .
+
 
 PHONY += lint
 lint: $(ENV)
@@ -41,7 +66,7 @@ lint: $(ENV)
 
 PHONY += test
 test:  $(ENV)
-	$(ENV_BIN)/tox
+	$(ENV_BIN)/tox -vv
 
 # set breakpoint with:
 #    DEBUG()
@@ -50,7 +75,7 @@ test:  $(ENV)
 
 PHONY += debug
 debug: build
-	DEBUG=1 $(ENV_BIN)/nosetests -vx mozsvc/tests
+	DEBUG=$(DEBUG) $(ENV_BIN)/pytest $(DEBUG) -v $(TEST_FOLDER)/$(TEST)
 
 $(ENV):
 	$(VIRTUALENV) $(VTENV_OPTS) $(ENV)
@@ -74,14 +99,13 @@ clean-dist:
 
 PHONY += clean
 clean: clean-dist
-	rm -rf $(ENV)
+	rm -rf ./local ./.cache
 	rm -rf *.egg-info .coverage
 	rm -rf .eggs .tox html
 	find . -name '*~' -exec echo rm -f {} +
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name __pycache__ -exec rm -rf {} +
-
 
 # END of Makefile
 .PHONY: $(PHONY)
