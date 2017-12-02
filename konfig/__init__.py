@@ -53,7 +53,7 @@ class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
         result = self.klass.before_set(parser, section, option, value)
         return self._serialize(result)
 
-    def _serialize(self, value):
+    def _serialize(self, value):  # pylint: disable=no-self-use
         if isinstance(value, bool):
             value = str(value).lower()
         elif isinstance(value, integer_types):
@@ -64,7 +64,7 @@ class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
             value = str(value)
         return value
 
-    def _unserialize(self, value):
+    def _unserialize(self, value):   # pylint: disable=no-self-use
         if not isinstance(value, string_types):
             # already converted
             return value
@@ -81,7 +81,7 @@ class ExtendedEnvironmentInterpolation(ExtendedInterpolation):
         return value
 
 
-class Config(ConfigParser):
+class Config(ConfigParser):  # pylint: disable=too-many-ancestors
 
     def __init__(self, filename):
         # let's read the file
@@ -93,10 +93,10 @@ class Config(ConfigParser):
             self.filename = None
             self.read_file(filename)
 
-    def optionxform(self, option):  # pylint: disable=E0202
+    def optionxform(self, option):  # pylint: disable=method-hidden, arguments-differ
         return option
 
-    def _read(self, fp, filename):
+    def _read(self, fp, filename):  # pylint: disable=arguments-differ
         # first pass
         ConfigParser._read(self, fp, filename)
 
@@ -128,7 +128,7 @@ class Config(ConfigParser):
             return dict(self.items(section))
 
         res = {}
-        for section in self:
+        for section in self:  # pylint: disable=redefined-argument-from-local
             for option, value in self[section].items():
                 option = '%s.%s' % (section, option)
                 res[option] = value
@@ -160,7 +160,7 @@ class Config(ConfigParser):
             else:
                 self[section] = parser[section]
 
-    def _configparser_kwargs(self):
+    def _configparser_kwargs(self):  # pylint: disable=no-self-use
         return {
             'interpolation': ExtendedEnvironmentInterpolation(),
             'comment_prefixes': ('#',),
@@ -205,7 +205,7 @@ class Config(ConfigParser):
 
         return args
 
-    def _convert_key(self, key, prefixes=None):
+    def _convert_key(self, key, prefixes=None):  # pylint: disable=no-self-use
         if prefixes is None:
             prefixes = []
 
