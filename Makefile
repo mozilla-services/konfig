@@ -15,7 +15,7 @@ PYBUILD  ?= build
 
 SYSTEMPYTHON = `which python$(PY) python | head -n 1`
 VIRTUALENV   = virtualenv --python=$(SYSTEMPYTHON)
-VTENV_OPTS   = "--no-site-packages"
+VENV_OPTS   = "--no-site-packages"
 TEST_FOLDER  = ./konfig/tests
 
 ENV     = ./local/py$(PY)
@@ -31,7 +31,7 @@ help::
 	@echo  '  test      - run tests for all supported environments (tox)'
 	@echo  '  debug     - run tests within a PDB debug session'
 	@echo  '  dist      - build packages in "$(PYDIST)/"'
-	@echo  '  pypi      - upload "$(PYDIST)/*" files to PyPi'
+	@echo  '  publish   - upload "$(PYDIST)/*" files to PyPi'
 	@echo  '  clean	    - remove most generated files'
 	@echo
 	@echo  'options:'
@@ -78,7 +78,7 @@ debug: build
 	DEBUG=$(DEBUG) $(ENV_BIN)/pytest $(DEBUG) -v $(TEST_FOLDER)/$(TEST)
 
 $(ENV):
-	$(VIRTUALENV) $(VTENV_OPTS) $(ENV)
+	$(VIRTUALENV) $(VENV_OPTS) $(ENV)
 	$(ENV_BIN)/pip install -r requirements.txt
 
 # for distribution, use python from virtualenv
@@ -88,8 +88,8 @@ dist:  clean-dist $(ENV)
 		sdist -d $(PYDIST)  \
 		bdist_wheel --bdist-dir $(PYBUILD) -d $(PYDIST)
 
-PHONY += pypi
-pypi: dist
+PHONY += publish
+publish: dist
 	$(ENV_BIN)/twine upload $(PYDIST)/*
 
 PHONY += clean-dist
