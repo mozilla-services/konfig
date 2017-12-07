@@ -1,2 +1,12 @@
+# requires
 configparser
 six
+
+# develop
+pytest
+pytest-cov
+pip
+pylint
+tox
+twine
+wheel

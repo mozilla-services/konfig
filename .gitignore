@@ -1,7 +1,12 @@
+*~
 *.pyc
 *.pyo
+*.egg-info
+*.swp
+build
+dist
 .tox
-bin/
-include/
-lib/
-man/
+.eggs
+local/
+html/
+.coverage
